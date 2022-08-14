@@ -23,3 +23,7 @@ SHOW GRANTS OF role <role name>
 8 Show grants that to that role
 SHOW GRANTS TO role <role name>
 
+9 Check role summary table
+SELECT *
+FROM "OPAL"."SNOW_USAGE"."GRANTS_OF_ROLES_CURRENT"
+WHERE GRANTEE_NAME in ()
