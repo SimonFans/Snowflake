@@ -1,0 +1,25 @@
+1. Grant schema usage to a new role
+GRANT USAGE ON SCHEMA <Schema name> TO <Role name>
+
+2. Grant role A to role B so that role B can have same role as role A
+GRANT Role <Role A> TO Role <Role B>
+
+3. Grant warehouse to a new role
+Grant operate on warehouse <warehouse size> to <role name>
+
+4. Rovoke role A from role B
+REVOKE ROLE <Role A> FROM ROLE <Role B>
+
+5. Grant select on table or view
+GRANT SELECT on TABLE/VIEW <table name> to role <role name>
+
+6. Grant select on future tables in a specific schema
+Grant select on future tables in schema <schema name> to role <role name>
+Grant select on all tables in schema <schema name> to role <role name>
+
+7. Show grants of role
+SHOW GRANTS OF role <role name>
+
+8 Show grants that to that role
+SHOW GRANTS TO role <role name>
+
