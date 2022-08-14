@@ -1,0 +1,44 @@
+PII:   https://www.youtube.com/watch?v=6L74mmWtvhc
+
+
+1. Identify and physically separate PII data  from Non PII data
+For example, your data might be in one table or a group of tables between two different schemas. This will allow you to pinpoint all the PII data you hold in your data warehouse and assign appropriate controls around it. And you need to make sure you have a way of joining both sensitive and non-sensitive data back together for reporting purpose. 
+
+2. Controlling access to PII data
+Once you separate your PII data from your non-PII data by placing the data in separate schemas, we need to consider how to manage user access to the data. we need to create at least two roles. One is to access sensitive data, the other one which cannot. Then you can combine the data from two schemas using a view and grant access to query the view to both roles. In snowflake, you can use current_role() function to determine how data should be returned to the user when he/she runs the query. 
+Example:
+
+select id,
+  case when CURRENT_ROLE() <> 'AAA' THEN 'xxxx-xxxx-xxxx' ELSE email END AS email
+ from
+(select 1 as id, 'xim@gmail.com' as email
+) t
+
+Futuremore, you can make use of secure views to prevent users viewing the ddl and inferring how they may access sensitive data. 
+Simply defining the view as create or replace secure view as part of the view definition
+
+#2 use snowflake specific - Dynamic Data Masking by creating masking policy in snowflake
+Allow you to create a dynamic masking policy as an object in the database. 
+This feature helps you to control who can create and modify masking policies while centralizing the rules in one place. 
+The masking policy is applied dynamically to any queries which reference those columns with a policy attached.
+
+Example:
+(1) create your dynamic masking policy
+Create or replace masking policy <policy name> as (val string)
+Returns string -> 
+Case when current_role() in (‘PII_role’) then val
+          when current_role() in (‘’Analyst) then regexp_replace(val,’+\@’, ‘*****@’)   # partial mask	
+Else ‘***masked****’
+End ; 
+
+(2) attach policy to PII columns
+Alter table db.schema.table modify column email set masking policy  <policy name>;
+
+(3) If you want to show columns where the policy is applied
+select * from table(information_schema.policy_references(policy_name => 'OPAL_DEV.CUSTOMER_METRICS_ODS.SLACK_USERS_POLICY'));
+
+
+Snowflake specific
+Secure views
+Dynamic Data Masking
+Evaluate row access policies
